@@ -176,6 +176,9 @@ CXX := $(CC_PREFIX)${TARGET_TOOLCHAIN_PREFIX}g++
 CC := $(CC_PREFIX)${TARGET_TOOLCHAIN_PREFIX}gcc
 AR := $(CC_PREFIX)${TARGET_TOOLCHAIN_PREFIX}ar
 
+# Load optimized kernel implementations
+include $(wildcard $(MAKEFILE_DIR)/ext_libs/*.inc)
+
 # Load the examples.
 include $(wildcard tensorflow/lite/experimental/micro/examples/*/Makefile.inc)
 
@@ -201,9 +204,9 @@ $(OBJDIR)%.o: %.S
 	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
 
 # The target that's compiled if there's no command-line arguments.
-all: $(MICROLITE_LIB_PATH)
+all: $(KERNEL_LIBS_PATH) $(MICROLITE_LIB_PATH)
 
-microlite: $(MICROLITE_LIB_PATH)
+microlite: $(KERNEL_LIBS_PATH) $(MICROLITE_LIB_PATH)
 
 # Hack for generating schema file bypassing flatbuffer parsing
 tensorflow/lite/schema/schema_generated.h:
@@ -214,11 +217,11 @@ $(MICROLITE_LIB_PATH): tensorflow/lite/schema/schema_generated.h $(MICROLITE_LIB
 	@mkdir -p $(dir $@)
 	$(AR) $(ARFLAGS) $(MICROLITE_LIB_PATH) $(MICROLITE_LIB_OBJS)
 
-$(BINDIR)%_test : $(OBJDIR)%_test.o $(MICROLITE_LIB_PATH)
+$(BINDIR)%_test : $(OBJDIR)%_test.o $(KERNEL_LIBS_PATH) $(MICROLITE_LIB_PATH)
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) \
 	-o $@ $< \
-	$(LIBFLAGS) $(MICROLITE_LIB_PATH) $(LDFLAGS) $(MICROLITE_LIBS)
+	$(LIBFLAGS) $(KERNEL_LIBS_PATH) $(MICROLITE_LIB_PATH) $(LDFLAGS) $(MICROLITE_LIBS)
 
 $(BINDIR)%.test_target: $(BINDIR)%_test
 	$(TEST_SCRIPT) $< '~~~ALL TESTS PASSED~~~'

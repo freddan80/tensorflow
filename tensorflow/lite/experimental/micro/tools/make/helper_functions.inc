@@ -184,11 +184,12 @@ $(1)_LOCAL_HDRS := $(3)
 $(1)_LOCAL_OBJS := $$(addprefix $$(OBJDIR), \
 $$(patsubst %.cc,%.o,$$(patsubst %.c,%.o,$$($(1)_LOCAL_SRCS))))
 $(1)_BINARY := $$(BINDIR)$(1)
-$$($(1)_BINARY): $$($(1)_LOCAL_OBJS) $$(MICROLITE_LIB_PATH)
+$$($(1)_BINARY): $$($(1)_LOCAL_OBJS) $$(KERNEL_LIBS_PATH) $$(MICROLITE_LIB_PATH)
 	@mkdir -p $$(dir $$@)
 	$$(CXX) $$(CXXFLAGS) $$(INCLUDES) \
 	-o $$($(1)_BINARY) $$($(1)_LOCAL_OBJS) \
-	$$(LIBFLAGS) $$(MICROLITE_LIB_PATH) $$(LDFLAGS) $$(MICROLITE_LIBS)
+	$$(LIBFLAGS) $$(MICROLITE_LIB_PATH) $$(KERNEL_LIBS_PATH) $$(LDFLAGS) $$(MICROLITE_LIBS)
+
 $(1): $$($(1)_BINARY)
 $(1)_bin: $$($(1)_BINARY).bin
 test_$(1): $$($(1)_BINARY)
