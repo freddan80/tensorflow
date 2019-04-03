@@ -382,7 +382,7 @@ optimizations and link it with the microlite lib.
 To utilize the CMSIS-NN optimized kernels, choose your target, e.g. Bluepill,
 and build with:
 
-make -f tensorflow/lite/experimental/micro/tools/make/Makefile KERNEL_LIB=cmsis TARGET=bluepill test
+make -f tensorflow/lite/experimental/micro/tools/make/Makefile TAGS=cmsis-nn TARGET=bluepill test
 
 That will build a CMSIS library based on the version downloaded by
 'download_dependencies.sh', so make sure you have run this script. If you want to
